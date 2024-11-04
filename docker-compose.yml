@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  mysqldb:
+    image: mysql:5.7
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=db  # Adjust the database name as needed
+    ports:
+      - 3306:3306
+    volumes:
+      - db:/var/lib/mysql
+
+  app-tpfoyer:
+    depends_on:
+      - mysqldb
+    image: yacinebenabda/tp-foyer:5.0.0  # Your built image name
+    restart: on-failure
+    ports:
+      - 8089:8089
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url": "jdbc:mysql://mysqldb:3306/db?createDatabaseIfNotExist=true",
+        "spring.datasource.username": "root",
+        "spring.datasource.password": "root",
+        "spring.jpa.hibernate.ddl-auto": "update",
+        "spring.jpa.show-sql": "true"
+      }'
+    stdin_open: true
+    tty: true
+
+volumes:
+  db:
