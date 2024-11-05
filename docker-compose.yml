@@ -1,31 +1,24 @@
-version: "3.8"
-
+version: '3'
 services:
-  mysqldb:
-    image: mysql:5.7
-    restart: unless-stopped
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=db  # Adjust the database name as needed
+  tp-foyer:
+    image: mohalibes/dali_5ds7_g6_tpfoyer:5.0.0
     ports:
-      - 3306:3306
-    volumes:
-      - db:/var/lib/mysql
-
-  app-tpfoyer:
+      - "8089:8089"
+    networks:
+      - app-network
     depends_on:
       - mysqldb
-    image: mohalibes/dali_5ds7_g6_tpfoyer:5.0.0  # Your built image name
-    restart: on-failure
-    ports:
-      - 8089:8089
+
+  mysqldb:
+    image: mysql:8
     environment:
-      SPRING_APPLICATION_JSON: '{
-        "spring.datasource.url": "jdbc:mysql://mysqldb:3306/db?createDatabaseIfNotExist=true",
-        "spring.datasource.username": "root",
-        "spring.datasource.password": "root",
-        "spring.jpa.hibernate.ddl-auto": "update",
-        "spring.jpa.show-sql": "true"
-      }'
-    stdin_open: true
-    tty: true
+      MYSQL_ROOT_PASSWORD: my-secret-pw
+      MYSQL_DATABASE: tpfoyerdb
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
