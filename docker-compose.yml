@@ -15,7 +15,7 @@ services:
   app-tpfoyer:
     depends_on:
       - mysqldb
-    image: mohalibes/MohamedAliBesbes_5DS7_G6_tpfoyer:5.0.0  # Your built image name
+    image: mohalibes/dali_5DS7_g6_tpfoyer:5.0.0  # Your built image name
     restart: on-failure
     ports:
       - 8089:8089
